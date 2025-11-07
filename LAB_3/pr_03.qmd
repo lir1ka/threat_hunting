@@ -1,0 +1,248 @@
+---
+title: "pr 03 Vakhrameev"
+author: "vakhrameevaleksandr@yandex.ru"
+format:
+    md: 
+        output-file: README.md
+---
+
+## Цель работы
+
+1. Развить практические навыки использования языка программирования R для обработки данных
+2. Закрепить знания базовых типов данных языка R
+3. Развить практические навыки использования функций обработки данных пакета `dplyr` – функции `select(), filter(), mutate(), arrange(), group_by()`
+
+## Исходные данные
+
+1.  Оепрационная система Darwin Mac.lan 25.0.0 Darwin Kernel Version 25.0.0
+2.  IDE Positron
+3.  R version 4.5.2
+
+## Задание
+
+Используя пакет `dplyr` и его функции ответить на вопросы по исходным данным.
+
+## Ход работы
+
+1. Для работы установить пакет `nycflights13`
+2. Проанализировать встроенные в пакет nycflights13 наборы данных с помощью
+языка R и ответить на вопросы:
+    - Сколько встроенных в пакет nycflights13 датафреймов?
+    - Сколько строк в каждом датафрейме?
+    - Сколько столбцов в каждом датафрейме?
+    - Как просмотреть примерный вид датафрейма?
+    - Сколько компаний-перевозчиков (carrier) учитывают эти наборы данных (представлено в наборах данных)?
+    - Сколько рейсов принял аэропорт John F Kennedy Intl в мае?
+    - Какой самый северный аэропорт?
+    - Какой аэропорт самый высокогорный (находится выше всех над уровнем моря)?
+    - Какие бортовые номера у самых старых самолетов?
+    - Какая средняя температура воздуха была в сентябре в аэропорту John FKennedy Intl (в градусах Цельсия).
+    - Самолеты какой авиакомпании совершили больше всего вылетов в июне?
+    - Самолеты какой авиакомпании задерживались чаще других в 2013 году?
+3. Оформить отчет в соответствии с шаблоном
+
+### Шаг №1
+
+Устанавливаем нужный пакет `nycflights13` с помощью команды 
+
+```
+install.packages('nycflights13')
+```
+
+```
+> install.packages('nycflights13')
+--- Please select a CRAN mirror for use in this session ---
+Secure CRAN mirrors 
+
+ 1: 0-Cloud [https]                   2: Australia (Canberra) [https]   
+ 3: Australia (Melbourne 1) [https]   4: Australia (Melbourne 2) [https]
+ 5: Austria (Wien) [https]            6: Belgium (Brussels) [https]     
+ 7: Brazil (PR) [https]               8: Brazil (SP 1) [https]          
+ 9: Brazil (SP 2) [https]            10: Bulgaria [https]               
+11: Canada (MB) [https]              12: Canada (ON 1) [https]          
+13: Canada (ON 2) [https]            14: Chile (Santiago) [https]       
+15: China (Beijing 1) [https]        16: China (Beijing 2) [https]      
+17: China (Beijing 3) [https]        18: China (Hefei) [https]          
+19: China (Hong Kong) [https]        20: China (Lanzhou) [https]        
+21: China (Nanjing) [https]          22: China (Shanghai 2) [https]     
+23: China (Shenzhen) [https]         24: China (Wuhan) [https]          
+25: Colombia (Cali) [https]          26: Costa Rica [https]             
+27: Cyprus [https]                   28: Czech Republic [https]         
+29: Denmark [https]                  30: East Asia [https]              
+31: Ecuador (Cuenca) [https]         32: Finland (Helsinki) [https]     
+33: France (Lyon 1) [https]          34: France (Lyon 2) [https]        
+35: France (Paris 1) [https]         36: Germany (Erlangen) [https]     
+37: Germany (Göttingen) [https]      38: Germany (Leipzig) [https]      
+39: Germany (Münster) [https]        40: Greece [https]                 
+41: Hungary [https]                  42: Iceland [https]                
+43: India (Bengaluru) [https]        44: India (Bhubaneswar) [https]    
+45: Indonesia (Banda Aceh) [https]   46: Iran (Mashhad) [https]         
+47: Italy (Milano) [https]           48: Italy (Padua) [https]          
+49: Japan (Yonezawa) [https]         50: Korea (Gyeongsan-si) [https]   
+51: Mexico (Mexico City) [https]     52: Mexico (Texcoco) [https]       
+53: Morocco [https]                  54: Netherlands (Dronten) [https]  
+55: New Zealand [https]              56: Norway [https]                 
+57: Saudi Arabia (Riyadh) [https]    58: Spain (A Coruña) [https]       
+59: Spain (Madrid) [https]           60: Sweden (Umeå) [https]          
+61: Switzerland (Zurich 1) [https]   62: Taiwan (Taipei) [https]        
+63: UK (Bristol) [https]             64: UK (London 1) [https]          
+65: USA (IA) [https]                 66: USA (MI) [https]               
+67: USA (OH) [https]                 68: USA (OR) [https]               
+69: USA (PA 1) [https]               70: USA (TN) [https]               
+71: USA (UT) [https]                 72: United Arab Emirates [https]   
+73: Uruguay [https]                  74: (other mirrors)                
+
+
+Selection: 1
+trying URL 'https://cloud.r-project.org/bin/macosx/big-sur-arm64/contrib/4.5/nycflights13_1.0.2.tgz'
+Content type 'application/x-gzip' length 4504016 bytes (4.3 MB)
+==================================================
+downloaded 4.3 MB
+
+
+The downloaded binary packages are in
+	/var/folders/ny/lc521mg53ms5gf7p02xj_z040000gn/T//RtmpGdJqGs/downloaded_packages
+```
+
+###  Шаг №2
+
+Для начала подключим необходимые библиотеки:
+
+```{r}
+library(nycflights13)
+```
+
+```{r}
+library(dplyr)
+```
+
+Теперь ответим на поставленные вопросы:
+
+#### Сколько встроенных в пакет nycflights13 датафреймов?
+
+```{r}
+ls("package:nycflights13")
+```
+
+#### Сколько строк и столбцов в каждом датафрейме?
+
+
+```{r}
+list(
+  airlines = dim(airlines),
+  airports = dim(airports),
+  flights  = dim(flights),
+  planes   = dim(planes),
+  weather  = dim(weather)
+)
+```
+
+
+#### Как просмотреть примерный вид датафрейма?
+
+```{r}
+glimpse(flights)
+```
+
+```{r}
+glimpse(weather)
+```
+
+```{r}
+glimpse(planes)
+```
+
+```{r}
+glimpse(airports)
+```
+
+```{r}
+glimpse(airlines)
+```
+
+
+#### Сколько компаний-перевозчиков (carrier) учитывают эти наборы данных (представлено в наборах данных)?
+
+```{r}
+airlines %>% select(carrier) %>% n_distinct()
+```
+
+
+#### Сколько рейсов принял аэропорт John F Kennedy Intl в мае?
+
+```{r}
+flights %>%
+  filter(month == 5, dest == "JFK") %>%
+  tally()
+```
+
+
+#### Какой самый северный аэропорт?
+
+
+```{r}
+airports %>%
+  slice_max(lat, n = 1)
+```
+
+
+#### Какой аэропорт самый высокогорный (находится выше всех над уровнем моря)?
+
+
+```{r}
+airports %>%
+  slice_max(alt, n = 1)
+```
+
+
+#### Какие бортовые номера у самых старых самолетов?
+
+
+```{r}
+planes %>%
+  filter(!is.na(year)) %>%
+  filter(year == min(year, na.rm = TRUE)) %>%
+  select(tailnum, year)
+```
+
+
+#### Какая средняя температура воздуха была в сентябре в аэропорту John F Kennedy Intl (в градусах Цельсия).
+
+
+```{r}
+weather %>%
+  filter(origin == "JFK", month == 9) %>%
+  summarise(mean_temp_c = mean((temp - 32) * 5/9, na.rm = TRUE))
+```
+
+#### Самолеты какой авиакомпании совершили больше всего вылетов в июне?
+
+```{r}
+flights %>%
+  filter(month == 6) %>%
+  count(carrier, sort = TRUE) %>%
+  left_join(airlines, by = "carrier") %>%
+  slice(1) %>%
+  pull(name)
+```
+
+
+#### Самолеты какой авиакомпании задерживались чаще других в 2013 году?
+
+
+```{r}
+flights %>%
+  mutate(delayed = dep_delay > 0 | arr_delay > 0) %>%
+  group_by(carrier) %>%
+  summarise(rate = mean(delayed, na.rm = TRUE)) %>%
+  left_join(airlines, by = "carrier") %>%
+  arrange(desc(rate)) %>%
+  slice(1)
+```
+
+
+### Шаг 3
+
+Отчет сделан и подготовлен согласно требованиям. На все вопросы получены ответы с помощью ЯП R и пакетов `dplyr` и `nycflights13`s.
+
+
