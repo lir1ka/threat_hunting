@@ -65,55 +65,70 @@ library(dplyr)
 #### Сколько строк в датафрейме?
 
 ```{r}
-starwars %>% nrow()
+starwars |> nrow()
 ```
 
 #### Сколько столбцов в датафрейме?
 
 
 ```{r}
-starwars %>% ncol()
+starwars |> ncol()
 ```
 
 #### Как просмотреть примерный вид датафрейма?
 
 ```{r}
-starwars %>% glimpse()
+starwars |> head(15) |> glimpse()
 ```
 
 #### Сколько уникальных рас персонажей (species) представлено в данных?
 
 ```{r}
-starwars %>% select(., species) %>% filter(!is.na(species)) %>% unique(.) %>% count(.) |> knitr::kable(format = "markdown")
+starwars |>
+  filter(!is.na(species)) |>
+  distinct(species) |>
+  summarise(n_species = n()) |>
+  knitr::kable(format = "markdown")
 ```
 
 #### Найти самого высокого персонажа.
 
 ```{r}
-starwars %>% arrange(., desc(height)) %>% select(name) %>% slice(1)  |> knitr::kable(format = "markdown")
+starwars |>
+  slice_max(height, n = 1, with_ties = FALSE) |>
+  select(name, height) |>
+  knitr::kable(format = "markdown")
 ```
 
 #### Найти всех персонажей ниже 170
  
 ```{r}
-starwars %>% filter(height < 170) %>% select(., name, height)|> knitr::kable(format = "markdown")
+starwars |>
+  filter(height < 170) |>
+  arrange(height, name) |>
+  select(name, height) |>
+  knitr::kable(format = "markdown")
 ```
 
 #### Подсчитать ИМТ (индекс массы тела) для всех персонажей.
 
 ```{r}
-starwars %>% mutate(., imt = mass / (height^2)) %>% select(., name, imt) |> knitr::kable(format = "markdown")
+starwars |>
+  mutate(height_m = height / 100,
+         imt = mass / (height_m ^ 2)) |>
+  select(name, mass, height, imt) |>
+  knitr::kable(format = "markdown")
 ```
 
 #### Найти 10 самых “вытянутых” персонажей. “Вытянутость” оценить по отношению массы (mass) к росту (height) персонажей
  
 ```{r}
-starwars %>%
-  filter(!is.na(mass), !is.na(height)) %>%
-  mutate(stretched = mass / height) %>%
-  arrange(stretched) %>%
-  head(10) %>%
-  select(name, stretched) %>%
+starwars |>
+  filter(!is.na(mass), !is.na(height), height > 0) |>
+  mutate(stretched = mass / height) |>
+  arrange(desc(stretched)) |>
+  slice_head(n = 10) |>
+  select(name, mass, height, stretched) |>
   knitr::kable(format = "markdown")
 ```
 
@@ -121,32 +136,31 @@ starwars %>%
 #### Найти средний возраст персонажей каждой расы вселенной Звездных войн
 
 ```{r}
-starwars %>%
-  filter(!is.na(birth_year), !is.na(species)) %>%
-  group_by(species) %>%
-  summarise(avg_birth = mean(birth_year, na.rm = TRUE), .groups = "drop") %>%
-  select(species, avg_birth) %>%
+starwars |>
+  filter(!is.na(species), !is.na(birth_year)) |>
+  summarise(avg_birth_year = mean(birth_year), .by = species) |>
+  arrange(species) |>
   knitr::kable(format = "markdown")
 ```
 
 #### Найти самый распространенный цвет глаз персонажей вселенной Звездных войн.
 
 ```{r}
-starwars %>%
-  count(eye_color, sort = TRUE) %>%
-  slice(1) %>%
-  pull(eye_color)
+starwars |>
+  filter(!is.na(species), !is.na(birth_year)) |>
+  summarise(avg_birth_year = mean(birth_year), .by = species) |>
+  arrange(species) |>
+  knitr::kable(format = "markdown")
 ```
 
 #### Подсчитать среднюю длину имени в каждой расе вселенной Звездных войн.
 
 ```{r}
-starwars %>%
-  filter(!is.na(species)) %>%
-  mutate(name_len = nchar(name)) %>%
-  group_by(species) %>%
-  summarise(mean_name_length = mean(name_len, na.rm = TRUE), .groups = "drop") %>%
-  select(species, mean_name_length) %>%
+starwars |>
+  filter(!is.na(species)) |>
+  mutate(name_len = nchar(name)) |>
+  summarise(mean_name_length = mean(name_len, na.rm = TRUE), .by = species) |>
+  arrange(species) |>
   knitr::kable(format = "markdown")
 ```
 
