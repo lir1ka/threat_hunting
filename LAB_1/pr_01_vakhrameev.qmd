@@ -53,6 +53,10 @@ format:
 Устанавливаем интерпретатор R
 ![](./images/1.png)
 
+```{r}
+R.version.string
+```
+
 ### Шаг №2
 
 Устанавливаем IDE Positron
